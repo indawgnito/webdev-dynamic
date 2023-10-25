@@ -1,16 +1,24 @@
 {
-    "name": "dynamic_server",
-    "description": "Dynamic Server",
-    "version": "1.0.0",
-    "author": {
-        "name": "",
-        "email": ""
+  "name": "dynamic_server",
+  "description": "Dynamic Server",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ben Webb",
+    "email": "webb8871@stthomas.edu"
+  },
+  "contributors": [
+    {
+      "name": "Parker Grant",
+      "email": "gran3554@stthomas.edu"
     },
-    "contributors": [
-    ],
-    "repository": {},
-    "dependencies": {
-        "express": "^4.18.2",
-        "sqlite3": "^5.1.6"
+    {
+      "name": "Bifuh Ngongalah",
+      "email": "ngon3769@stthomas.edu"
     }
+  ],
+  "repository": {},
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6"
+  }
 }
