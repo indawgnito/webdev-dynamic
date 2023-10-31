@@ -9,7 +9,7 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 const port = 8000;
 const root = path.join(__dirname, "public");
-const template = path.join(__dirname, "templates");
+const templates = path.join(__dirname, "templates");
 
 const db = new sqlite3.Database(
   path.join(__dirname, "db", "earthquake_data.db"),
@@ -60,12 +60,42 @@ app.get("/age/:age", (req, res) => {
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "Age" = ?`;
 
   let promise1 = dbSelect(query, [age]);
-
-  promise1.then((rows) => {
-    const worryMap = calculateWorry(rows);
-    const experienceMap = calculateExperience(rows);
-
-    res.status(200).json(worryMap);
+  let promise2 = fs.promises.readFile(path.join(templates, 'temp.html'), 'utf-8');
+  Promise.all([promise1, promise2]).then((results) => {
+    let age_group = [age];
+    const worryMap = calculateWorry(results[0]);
+    const experienceMap = calculateExperience(results[0]);
+    let table_body = ''
+    for (const key in worryMap) {
+      if (worryMap.hasOwnProperty(key)) {
+          const value = worryMap[key];
+          const rowHtml = `
+              <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+              </tr>
+          `;
+          table_body += rowHtml;
+      }
+  }
+  let table_body2 = ''
+    for (const key in experienceMap) {
+      if (experienceMap.hasOwnProperty(key)) {
+          const value = experienceMap[key];
+          const rowHtml = `
+              <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+              </tr>
+          `;
+          table_body2 += rowHtml;
+      }
+  }
+  
+  let response =  results[1].replace('$AGE_GROUP$', age_group);
+  response = response.replace('$TABLE_DATA$', table_body);
+  response = response.replace('$TABLE_DATA2$', table_body2);
+  res.status(200).type('html').send(response);
   });
 });
 
@@ -95,25 +125,54 @@ app.get("/income/:income", (req, res) => {
     "$100,000 to $124,999",
     "$125,000 to $149,999",
     "$150,000 to $174,999",
-    "$200,000 and up",
+    "$200,000 and up"
   ];
 
   if (!possibleIncomes.includes(income)) {
-    console.log(income);
     res.status(404).send("Error: Income group not found");
     return;
   }
 
-  const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data WHERE "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
+  const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
 
   let promise1 = dbSelect(query, [income]);
-
-  promise1.then((rows) => {
-    console.log(income);
-    const worryMap = calculateWorry(rows);
-    const experienceMap = calculateExperience(rows);
-
-    res.status(200).json(worryMap);
+  let promise2 = fs.promises.readFile(path.join(templates, 'income.html'), 'utf-8');
+  Promise.all([promise1, promise2]).then((results) => {
+    let income_group = [income];
+    const worryMap = calculateWorry(results[0]);
+    const experienceMap = calculateExperience(results[0]);
+    let table_body = ''
+    for (const key in worryMap) {
+      if (worryMap.hasOwnProperty(key)) {
+          const value = worryMap[key];
+          const rowHtml = `
+              <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+              </tr>
+          `;
+          table_body += rowHtml;
+      }
+  }
+  let table_body2 = ''
+    for (const key in experienceMap) {
+      if (experienceMap.hasOwnProperty(key)) {
+          const value = experienceMap[key];
+          const rowHtml = `
+              <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+              </tr>
+          `;
+          table_body2 += rowHtml;
+      }
+  }
+  
+  let response =  results[1].replace('$INCOME_GROUP$', income_group);
+  response = response.replace('$TABLE_DATA$', table_body);
+  response = response.replace('$TABLE_DATA2$', table_body2);
+  //console.log(response);
+  res.status(200).type('html').send(response);
   });
 });
 
@@ -155,12 +214,42 @@ app.get("/region/:region", (req, res) => {
   let query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "US Region" = ?`;
 
   let promise1 = dbSelect(query, [region]);
-
-  promise1.then((rows) => {
-    const worryMap = calculateWorry(rows);
-    const experienceMap = calculateExperience(rows);
-
-    res.status(200).json(worryMap);
+  let promise2 = fs.promises.readFile(path.join(templates, 'region.html'), 'utf-8');
+  Promise.all([promise1, promise2]).then((results) => {
+    let region_name = [region];
+    const worryMap = calculateWorry(results[0]);
+    const experienceMap = calculateExperience(results[0]);
+    let table_body = ''
+    for (const key in worryMap) {
+      if (worryMap.hasOwnProperty(key)) {
+          const value = worryMap[key];
+          const rowHtml = `
+              <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+              </tr>
+          `;
+          table_body += rowHtml;
+      }
+  }
+  let table_body2 = ''
+    for (const key in experienceMap) {
+      if (experienceMap.hasOwnProperty(key)) {
+          const value = experienceMap[key];
+          const rowHtml = `
+              <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+              </tr>
+          `;
+          table_body2 += rowHtml;
+      }
+  }
+  
+  let response =  results[1].replace('$REGION$', region_name);
+  response = response.replace('$TABLE_DATA$', table_body);
+  response = response.replace('$TABLE_DATA2$', table_body2);
+  res.status(200).type('html').send(response);
   });
 });
 
