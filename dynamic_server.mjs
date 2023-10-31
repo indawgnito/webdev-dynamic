@@ -73,41 +73,43 @@ app.get("/age/:age", (req, res) => {
 // Income
 app.get("/income/:income", (req, res) => {
   const incomeMap = {
-    "0-9999": "0 - $9,999",
-    "10000-24999": "$10,000 - $24,999",
-    "25000-49999": "$25,000 - $49,999",
-    "50000-74999": "$50,000 - $74,999",
-    "75000-99999": "$75,000 - $99,999",
-    "100000-124999": "$100,000 - $124,999",
-    "125000-149999": "$125,000 - $149,999",
-    "150000-174999": "$150,000 - $174,999",
+    "0-9999": "$0 to $9,999",
+    "10000-24999": "$10,000 to $24,999",
+    "25000-49999": "$25,000 to $49,999",
+    "50000-74999": "$50,000 to $74,999",
+    "75000-99999": "$75,000 to $99,999",
+    "100000-124999": "$100,000 to $124,999",
+    "125000-149999": "$125,000 to $149,999",
+    "150000-174999": "$150,000 to $174,999",
     "200000-up": "$200,000 and up",
   };
 
   const income = incomeMap[req.params.income];
 
   const possibleIncomes = [
-    "0 - $9,999",
-    "$10,000 - $24,999",
-    "$25,000 - $49,999",
-    "$50,000 - $74,999",
-    "$75,000 - $99,999",
-    "$100,000 - $124,999",
-    "$125,000 - $149,999",
-    "$150,000 - $174,999",
+    "$0 to $9,999",
+    "$10,000 to $24,999",
+    "$25,000 to $49,999",
+    "$50,000 to $74,999",
+    "$75,000 to $99,999",
+    "$100,000 to $124,999",
+    "$125,000 to $149,999",
+    "$150,000 to $174,999",
     "$200,000 and up",
   ];
 
   if (!possibleIncomes.includes(income)) {
+    console.log(income);
     res.status(404).send("Error: Income group not found");
     return;
   }
 
-  const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
+  const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data WHERE "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
 
   let promise1 = dbSelect(query, [income]);
 
   promise1.then((rows) => {
+    console.log(income);
     const worryMap = calculateWorry(rows);
     const experienceMap = calculateExperience(rows);
 
