@@ -38,6 +38,8 @@ function dbSelect(query, params) {
 let app = express();
 app.use(express.static(root));
 
+// GET ROUTE 1:
+// Age
 app.get("/age/:age", (req, res) => {
   const ageMap = {
     "18-29": "18 - 29",
@@ -48,6 +50,12 @@ app.get("/age/:age", (req, res) => {
 
   const age = ageMap[req.params.age];
 
+  possibleAges = ["18 - 29", "30 - 44", "45 - 59", "60"];
+
+  if (possibleAges[age] == undefined) {
+    res.status(404).send("Error: Age group not found");
+  }
+
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "Age" = ?`;
 
   let promise1 = dbSelect(query, [age]);
@@ -56,6 +64,9 @@ app.get("/age/:age", (req, res) => {
     res.status(200).json(rows);
   });
 });
+
+// GET ROUTE 2:
+// Income
 app.get("/income/:income", (req, res) => {
   const incomeMap = {
     "0-9999": "0 - $9,999",
@@ -71,6 +82,22 @@ app.get("/income/:income", (req, res) => {
 
   const income = incomeMap[req.params.income];
 
+  possibleIncomes = [
+    "0 - $9,999",
+    "$10,000 - $24,999",
+    "$25,000 - $49,999",
+    "$50,000 - $74,999",
+    "$75,000 - $99,999",
+    "$100,000 - $124,999",
+    "$125,000 - $149,999",
+    "$150,000 - $174,999",
+    "$200,000 and up",
+  ];
+
+  if (possibleIncomes[income] == undefined) {
+    res.status(404).send("Error: Income group not found");
+  }
+
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
 
   let promise1 = dbSelect(query, [income]);
@@ -80,6 +107,8 @@ app.get("/income/:income", (req, res) => {
   });
 });
 
+// GET ROUTE 3:
+// Region
 app.get("/region/:region", (req, res) => {
   // un-abbreviate regions to match the data
   const regionMap = {
@@ -95,6 +124,22 @@ app.get("/region/:region", (req, res) => {
   };
 
   const region = regionMap[req.params.region];
+
+  possibleRegions = [
+    "New England",
+    "Middle Atlantic",
+    "East North Central",
+    "West North Central",
+    "South Atlantic",
+    "East South Central",
+    "West South Central",
+    "Mountain",
+    "Pacific",
+  ];
+
+  if (possibleRegions[region] == undefined) {
+    res.status(404).send("Error: Region not found");
+  }
 
   let query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "US Region" = ?`;
 
