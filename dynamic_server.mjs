@@ -50,10 +50,11 @@ app.get("/age/:age", (req, res) => {
 
   const age = ageMap[req.params.age];
 
-  possibleAges = ["18 - 29", "30 - 44", "45 - 59", "60"];
+  const possibleAges = ["18 - 29", "30 - 44", "45 - 59", "60"];
 
-  if (possibleAges[age] == undefined) {
+  if (!possibleAges.includes(age)) {
     res.status(404).send("Error: Age group not found");
+    return;
   }
 
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "Age" = ?`;
@@ -61,7 +62,10 @@ app.get("/age/:age", (req, res) => {
   let promise1 = dbSelect(query, [age]);
 
   promise1.then((rows) => {
-    res.status(200).json(rows);
+    const worryMap = calculateWorry(rows);
+    const experienceMap = calculateExperience(rows);
+
+    res.status(200).json(worryMap);
   });
 });
 
@@ -82,7 +86,7 @@ app.get("/income/:income", (req, res) => {
 
   const income = incomeMap[req.params.income];
 
-  possibleIncomes = [
+  const possibleIncomes = [
     "0 - $9,999",
     "$10,000 - $24,999",
     "$25,000 - $49,999",
@@ -94,8 +98,9 @@ app.get("/income/:income", (req, res) => {
     "$200,000 and up",
   ];
 
-  if (possibleIncomes[income] == undefined) {
+  if (!possibleIncomes.includes(income)) {
     res.status(404).send("Error: Income group not found");
+    return;
   }
 
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
@@ -103,7 +108,10 @@ app.get("/income/:income", (req, res) => {
   let promise1 = dbSelect(query, [income]);
 
   promise1.then((rows) => {
-    res.status(200).json(rows);
+    const worryMap = calculateWorry(rows);
+    const experienceMap = calculateExperience(rows);
+
+    res.status(200).json(worryMap);
   });
 });
 
@@ -125,7 +133,7 @@ app.get("/region/:region", (req, res) => {
 
   const region = regionMap[req.params.region];
 
-  possibleRegions = [
+  const possibleRegions = [
     "New England",
     "Middle Atlantic",
     "East North Central",
@@ -137,8 +145,9 @@ app.get("/region/:region", (req, res) => {
     "Pacific",
   ];
 
-  if (possibleRegions[region] == undefined) {
+  if (!possibleRegions.includes(region)) {
     res.status(404).send("Error: Region not found");
+    return;
   }
 
   let query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "US Region" = ?`;
@@ -146,10 +155,51 @@ app.get("/region/:region", (req, res) => {
   let promise1 = dbSelect(query, [region]);
 
   promise1.then((rows) => {
-    res.status(200).json(rows);
+    const worryMap = calculateWorry(rows);
+    const experienceMap = calculateExperience(rows);
+
+    res.status(200).json(worryMap);
   });
 });
 
 app.listen(port, () => {
   console.log("Now listening on port " + port);
 });
+
+// FUNCTION DEFINITIONS
+
+// calculateWorry
+function calculateWorry(rows) {
+  let worryMap = {
+    "Not at all worried": 0,
+    "Not so worried": 0,
+    "Somewhat worried": 0,
+    "Very worried": 0,
+    "Extremely worried": 0,
+  };
+
+  for (let i = 0; i < rows.length; i++) {
+    const worry = rows[i]["In general, how worried are you about earthquakes?"];
+
+    worryMap[worry] += 1;
+  }
+
+  return worryMap;
+}
+
+// calculateExperience
+function calculateExperience(rows) {
+  let experienceMap = {
+    No: 0,
+    "Yes, one or more minor ones": 0,
+    "Yes, one or more major ones": 0,
+  };
+
+  for (let i = 0; i < rows.length; i++) {
+    const experience = rows[i]["Have you ever experienced an earthquake?"];
+
+    experienceMap[experience] += 1;
+  }
+
+  return experienceMap;
+}
