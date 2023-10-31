@@ -48,9 +48,9 @@ app.get("/age/:age", (req, res) => {
 
   const age = ageMap[req.params.age];
 
-  const query = `SELECT "Age" FROM earthquake_data`;
+  const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "Age" = ?`;
 
-  let promise1 = dbSelect(query);
+  let promise1 = dbSelect(query, [age]);
 
   promise1.then((rows) => {
     res.status(200).json(rows);
@@ -71,9 +71,9 @@ app.get("/income/:income", (req, res) => {
 
   const income = incomeMap[req.params.income];
 
-  const query = `SELECT "How much total combined money did all members of your HOUSEHOLD earn last year?" FROM earthquake_data`;
+  const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
 
-  let promise1 = dbSelect(query);
+  let promise1 = dbSelect(query, [income]);
 
   promise1.then((rows) => {
     res.status(200).json(rows);
@@ -96,9 +96,9 @@ app.get("/region/:region", (req, res) => {
 
   const region = regionMap[req.params.region];
 
-  let query = `SELECT "US Region" FROM earthquake_data`;
+  let query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "US Region" = ?`;
 
-  let promise1 = dbSelect(query);
+  let promise1 = dbSelect(query, [region]);
 
   promise1.then((rows) => {
     res.status(200).json(rows);
