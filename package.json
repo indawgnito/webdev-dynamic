@@ -19,6 +19,7 @@
   "repository": {},
   "dependencies": {
     "express": "^4.18.2",
+    "plotly.js-dist": "^2.27.0",
     "sqlite3": "^5.1.6"
   }
 }
