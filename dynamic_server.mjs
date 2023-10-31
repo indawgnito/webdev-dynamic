@@ -39,21 +39,70 @@ let app = express();
 app.use(express.static(root));
 
 app.get("/age/:age", (req, res) => {
-  const age = req.params.age;
+  const ageMap = {
+    "18-29": "18 - 29",
+    "30-44": "30 - 44",
+    "45-59": "45 - 59",
+    "60-up": "60",
+  };
 
-  let query = `SELECT * FROM earthquake_data`;
+  const age = ageMap[req.params.age];
+
+  const query = `SELECT "Age" FROM earthquake_data`;
+
+  let promise1 = dbSelect(query);
+
+  promise1.then((rows) => {
+    res.status(200).json(rows);
+  });
 });
-
 app.get("/income/:income", (req, res) => {
-  const income = req.params.income;
+  const incomeMap = {
+    "0-9999": "0 - $9,999",
+    "10000-24999": "$10,000 - $24,999",
+    "25000-49999": "$25,000 - $49,999",
+    "50000-74999": "$50,000 - $74,999",
+    "75000-99999": "$75,000 - $99,999",
+    "100000-124999": "$100,000 - $124,999",
+    "125000-149999": "$125,000 - $149,999",
+    "150000-174999": "$150,000 - $174,999",
+    "200000-up": "$200,000 and up",
+  };
 
-  let query = `SELECT * FROM earthquake_data`;
+  const income = incomeMap[req.params.income];
+
+  const query = `SELECT "How much total combined money did all members of your HOUSEHOLD earn last year?" FROM earthquake_data`;
+
+  let promise1 = dbSelect(query);
+
+  promise1.then((rows) => {
+    res.status(200).json(rows);
+  });
 });
 
 app.get("/region/:region", (req, res) => {
-  const region = req.params.region;
+  // un-abbreviate regions to match the data
+  const regionMap = {
+    ne: "New England",
+    ma: "Middle Atlantic",
+    enc: "East North Central",
+    wnc: "West North Central",
+    sa: "South Atlantic",
+    esc: "East South Central",
+    wsc: "West South Central",
+    m: "Mountain",
+    p: "Pacific",
+  };
 
-  let query = `SELECT * FROM earthquake_data`;
+  const region = regionMap[req.params.region];
+
+  let query = `SELECT "US Region" FROM earthquake_data`;
+
+  let promise1 = dbSelect(query);
+
+  promise1.then((rows) => {
+    res.status(200).json(rows);
+  });
 });
 
 app.listen(port, () => {
