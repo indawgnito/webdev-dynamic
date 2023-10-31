@@ -50,7 +50,7 @@ app.get("/age/:age", (req, res) => {
 
   const age = ageMap[req.params.age];
 
-  possibleAges = ["18 - 29", "30 - 44", "45 - 59", "60"];
+  const possibleAges = ["18 - 29", "30 - 44", "45 - 59", "60"];
 
   if (possibleAges[age] == undefined) {
     res.status(404).send("Error: Age group not found");
@@ -82,7 +82,7 @@ app.get("/income/:income", (req, res) => {
 
   const income = incomeMap[req.params.income];
 
-  possibleIncomes = [
+  const possibleIncomes = [
     "0 - $9,999",
     "$10,000 - $24,999",
     "$25,000 - $49,999",
@@ -125,7 +125,7 @@ app.get("/region/:region", (req, res) => {
 
   const region = regionMap[req.params.region];
 
-  possibleRegions = [
+  const possibleRegions = [
     "New England",
     "Middle Atlantic",
     "East North Central",
