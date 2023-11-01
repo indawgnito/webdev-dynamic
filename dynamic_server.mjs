@@ -234,21 +234,19 @@ app.get("/region/:region", (req, res) => {
   const region = regionMap[req.params.region];
 
   const possibleRegions = [
-    "New England",
-    "Middle Atlantic",
-    "East North Central",
-    "West North Central",
-    "South Atlantic",
-    "East South Central",
-    "West South Central",
-    "Mountain",
-    "Pacific",
+    "ne", "ma", "enc", "wnc", "sa", "esc", "wsc", "m", "p"
   ];
 
-  if (!possibleRegions.includes(region)) {
-    res.status(404).send("Error: Region not found");
+  const currentIndex = possibleRegions.indexOf(req.params.region);
+
+  if (currentIndex === -1) {
+    res.status(404).send("Error: Income group not found");
     return;
   }
+
+  const prevRegion = possibleRegions[currentIndex - 1];
+  const nextRegion = possibleRegions[currentIndex + 1];
+
 
   let query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "US Region" = ?`;
 
@@ -291,7 +289,14 @@ app.get("/region/:region", (req, res) => {
     let response = results[1].replace("$REGION$", region_name);
     response = response.replace("$TABLE_DATA$", table_body);
     response = response.replace("$TABLE_DATA2$", table_body2);
+    // Add "Previous" and "Next" links to the response
+    response = response.replace("$PREV_LINK$", prevRegion ? `/region/${prevRegion}` : "#");
+    response = response.replace("$NEXT_LINK$", nextRegion ? `/region/${nextRegion}` : "#");
     res.status(200).type("html").send(response);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(404).send("Error: Region not found");
   });
 });
 
