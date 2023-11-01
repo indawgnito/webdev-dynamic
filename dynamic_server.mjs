@@ -41,7 +41,6 @@ app.use(express.static(root));
 // GET ROUTE 1:
 // Age
 app.get("/age/:age", (req, res) => {
-  let filePath = path.join(templates, "age.html");
 
   const ageMap = {
     "18-29": "18 - 29",
@@ -52,18 +51,21 @@ app.get("/age/:age", (req, res) => {
 
   const age = ageMap[req.params.age];
 
-  const possibleAges = ["18 - 29", "30 - 44", "45 - 59", "60"];
+  const possibleAges = ["18-29", "30-44", "45-59", "60-up"];
+  const currentIndex = possibleAges.indexOf(req.params.age);
 
-  if (!possibleAges.includes(age)) {
+  if (currentIndex === -1) {
     res.status(404).send("Error: Age group not found");
     return;
   }
 
+  const prevAge = possibleAges[currentIndex - 1];
+  const nextAge = possibleAges[currentIndex + 1];
+
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "Age" = ?`;
 
   let promise1 = dbSelect(query, [age]);
-
-  let promise2 = fs.promises.readFile(filePath, "utf-8");
+  let promise2 = fs.promises.readFile(path.join(templates, "age.html"), "utf-8");
 
   Promise.all([promise1, promise2])
     .then((results) => {
@@ -103,6 +105,11 @@ app.get("/age/:age", (req, res) => {
       response = response.replace("$AGE_GROUP$", age);
       response = response.replace("$TABLE_DATA$", table_body);
       response = response.replace("$TABLE_DATA2$", table_body2);
+
+      // Add "Previous" and "Next" links to the response
+      response = response.replace("$PREV_LINK$", prevAge ? `/age/${prevAge}` : "#");
+      response = response.replace("$NEXT_LINK$", nextAge ? `/age/${nextAge}` : "#");
+
       res.status(200).type("html").send(response);
     })
     .catch((err) => {
@@ -110,6 +117,7 @@ app.get("/age/:age", (req, res) => {
       res.status(404).send("Error: Age group not found");
     });
 });
+
 
 // GET ROUTE 2:
 // Income
@@ -123,27 +131,35 @@ app.get("/income/:income", (req, res) => {
     "100000-124999": "$100,000 to $124,999",
     "125000-149999": "$125,000 to $149,999",
     "150000-174999": "$150,000 to $174,999",
+    "175000-199999": "$175,000 to $199,999",
     "200000-up": "$200,000 and up",
   };
 
   const income = incomeMap[req.params.income];
 
   const possibleIncomes = [
-    "$0 to $9,999",
-    "$10,000 to $24,999",
-    "$25,000 to $49,999",
-    "$50,000 to $74,999",
-    "$75,000 to $99,999",
-    "$100,000 to $124,999",
-    "$125,000 to $149,999",
-    "$150,000 to $174,999",
-    "$200,000 and up",
+    "0-9999",
+    "10000-24999",
+    "25000-49999",
+    "50000-74999",
+    "75000-99999",
+    "100000-124999",
+    "125000-149999",
+    "150000-174999",
+    "175000-199999",
+    "200000-up",
   ];
+ 
+  const currentIndex = possibleIncomes.indexOf(req.params.income);
 
-  if (!possibleIncomes.includes(income)) {
+  if (currentIndex === -1) {
     res.status(404).send("Error: Income group not found");
     return;
   }
+
+  const prevIncome = possibleIncomes[currentIndex - 1];
+  const nextIncome = possibleIncomes[currentIndex + 1];
+ 
 
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
 
@@ -187,7 +203,15 @@ app.get("/income/:income", (req, res) => {
     response = response.replace("$TABLE_DATA$", table_body);
     response = response.replace("$TABLE_DATA2$", table_body2);
     //console.log(response);
+
+    // Add "Previous" and "Next" links to the response
+    response = response.replace("$PREV_LINK$", prevIncome ? `/income/${prevIncome}` : "#");
+    response = response.replace("$NEXT_LINK$", nextIncome ? `/income/${nextIncome}` : "#");
     res.status(200).type("html").send(response);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(404).send("Error: Income group not found");
   });
 });
 

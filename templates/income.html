@@ -8,6 +8,9 @@
   <body>
     <h2>Earthquake Concern by Income</h2>
     <p>People earning $INCOME_GROUP$:</p>
+    <!-- Placeholders for Previous and Next links -->
+    <a href="$PREV_LINK$" id="prevLink">Previous</a>
+    <a href="$NEXT_LINK$" id="nextLink">Next</a>
     <table>
       <thead>
         <tr>
@@ -32,4 +35,28 @@
       </tbody>
     </table>
   </body>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const prevLink = document.getElementById('prevLink');
+      const nextLink = document.getElementById('nextLink');
+  
+      prevLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        navigateToLink(prevLink.getAttribute('href'));
+      });
+  
+      nextLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        navigateToLink(nextLink.getAttribute('href'));
+      });
+  
+      function navigateToLink(link) {
+        // Navigate to the specified link using JavaScript
+        if (link && link !== '#') {
+          window.location.href = link;
+        }
+      }
+    });
+  </script>
 </html>
