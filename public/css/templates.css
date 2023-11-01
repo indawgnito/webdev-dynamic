@@ -4,7 +4,6 @@ body {
   align-items: center;
 }
 
-/* make table look better */
 table {
   border-collapse: collapse;
   border: 1px solid black;
@@ -16,9 +15,11 @@ td {
   padding: 5px;
 }
 
-/* make table header look better */
-
 th {
   background-color: #005075;
   color: white;
+}
+
+.datatable {
+  width: max-content;
 }
