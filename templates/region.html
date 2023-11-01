@@ -3,7 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TEMP</title>
+    <title>Earthquake Concern by Region</title>
+    <script
+      src="https://cdn.plot.ly/plotly-2.27.0.min.js"
+      charset="utf-8"
+    ></script>
+    <link rel="stylesheet" href="/css/templates.css" />
   </head>
   <body>
     <h2>Earthquake Concern by Region</h2>
@@ -11,6 +16,8 @@
     <!-- Placeholders for Previous and Next links -->
     <a href="$PREV_LINK$" id="prevLink">Previous</a>
     <a href="$NEXT_LINK$" id="nextLink">Next</a>
+
+    <div id="worryplot" style="width: 50%"></div>
     <table>
       <thead>
         <tr>
@@ -35,6 +42,33 @@
       </tbody>
     </table>
   </body>
+  <script>
+    const worryMap = $$WORRY_MAP$$;
+
+    const worryData = [
+      {
+        x: [
+          "Not at all worried",
+          "Not so worried",
+          "Somewhat worried",
+          "Very worried",
+          "Extremely worried",
+        ],
+
+        y: [
+          worryMap["Not at all worried"],
+          worryMap["Not so worried"],
+          worryMap["Somewhat worried"],
+          worryMap["Very worried"],
+          worryMap["Extremely worried"],
+        ],
+
+        type: "bar",
+      },
+    ];
+
+    Plotly.newPlot("worryplot", worryData);
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

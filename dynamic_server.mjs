@@ -199,7 +199,10 @@ app.get("/income/:income", (req, res) => {
       }
     }
 
-    let response = results[1].replace("$INCOME_GROUP$", income_group);
+    //let response = results[1].replace("$INCOME_GROUP$", income_group);
+    let response = results[1];
+    response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
+    response = response.replace("$INCOME_GROUP$", income_group);
     response = response.replace("$TABLE_DATA$", table_body);
     response = response.replace("$TABLE_DATA2$", table_body2);
     //console.log(response);
@@ -286,7 +289,10 @@ app.get("/region/:region", (req, res) => {
       }
     }
 
-    let response = results[1].replace("$REGION$", region_name);
+    //let response = results[1].replace("$REGION$", region_name);
+    let response = results[1];
+    response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
+    response = response.replace("$REGION$", region_name);
     response = response.replace("$TABLE_DATA$", table_body);
     response = response.replace("$TABLE_DATA2$", table_body2);
     // Add "Previous" and "Next" links to the response
