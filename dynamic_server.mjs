@@ -54,7 +54,7 @@ app.get("/age/:age", (req, res) => {
   const currentIndex = possibleAges.indexOf(req.params.age);
 
   if (currentIndex === -1) {
-    res.status(404).send("Error: Age group not found");
+    res.status(404).send("Error: " + req.params.age + " age group not found");
     return;
   }
 
@@ -128,7 +128,7 @@ app.get("/age/:age", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).send("Error: Age group not found");
+      res.status(404).send("Error: " + age_group + " age group not found");
     });
 });
 
@@ -166,7 +166,7 @@ app.get("/income/:income", (req, res) => {
   const currentIndex = possibleIncomes.indexOf(req.params.income);
 
   if (currentIndex === -1) {
-    res.status(404).send("Error: Income group not found");
+    res.status(404).send("Error: " + req.params.income + " income group not found");
     return;
   }
 
@@ -239,7 +239,7 @@ app.get("/income/:income", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).send("Error: Income group not found");
+      res.status(404).send("Error: " + income_group + " income group not found");
     });
 });
 
@@ -276,7 +276,7 @@ app.get("/region/:region", (req, res) => {
   const currentIndex = possibleRegions.indexOf(req.params.region);
 
   if (currentIndex === -1) {
-    res.status(404).send("Error: Income group not found");
+    res.status(404).send("Error: " + req.params.region + " region not found");
     return;
   }
 
@@ -347,7 +347,7 @@ app.get("/region/:region", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).send("Error: Region not found");
+      res.status(404).send("Error: " + region_name + " region not found");
     });
 });
 
