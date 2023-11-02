@@ -4,32 +4,36 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Earthquake Concern by Income</title>
-    <link rel="stylesheet" href="/css/css.css"/>
-    <link rel="stylesheet" href="/css/foundation.css">
+    <link rel="stylesheet" href="/css/css.css" />
+    <link rel="stylesheet" href="/css/foundation.css" />
+    <link rel="stylesheet" href="/css/templates.css" />
     <script
       src="https://cdn.plot.ly/plotly-2.27.0.min.js"
       charset="utf-8"
     ></script>
-    <link rel="stylesheet" href="/css/templates.css" />
   </head>
   <body>
     <div class="off-canvas-wrapper borderLine">
       <!-- Menu -->
       <ul class="horizontal menu">
-          <li><a href="../index.html">Home</a></li>
-          <li><a href="../age/18-29">Age</a></li>
-          <li><a href="../income/0-9999">Income</a></li>
-          <li><a href="../region/ne">Region</a></li>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../age/18-29">Age</a></li>
+        <li><a href="../income/0-9999">Income</a></li>
+        <li><a href="../region/ne">Region</a></li>
       </ul>
-  </div>
+    </div>
     <h2>Earthquake Concern by Income</h2>
-    <p>People earning $INCOME_GROUP$:</p>
+    <p style="font-style: italic">People earning $INCOME_GROUP$</p>
     <!-- Placeholders for Previous and Next links -->
     <a href="$PREV_LINK$" id="prevLink">Previous</a>
     <a href="$NEXT_LINK$" id="nextLink">Next</a>
 
+    <br />
+    <hr />
+    <br />
+    <h4>How worried about earthquakes is this group?</h4>
     <div id="worryplot" style="width: 50%"></div>
-    <table>
+    <table class="datatable">
       <thead>
         <tr>
           <th>Concern Level</th>
@@ -40,8 +44,14 @@
         $TABLE_DATA$
       </tbody>
     </table>
-    <p></p>
-    <table>
+    <br />
+    <hr />
+    <br />
+    <h4>
+      How many people in this group have actually experienced an earthquake?
+    </h4>
+    <div id="experienceplot" style="width: 50%"></div>
+    <table class="datatable">
       <thead>
         <tr>
           <th>Experienced Earthquake?</th>
@@ -78,27 +88,43 @@
       },
     ];
 
+    const experienceMap = $$EXPERIENCE_MAP$$;
+
+    const experienceData = [
+      {
+        x: ["No", "Yes, one or more minor ones", "Yes, one or more major ones"],
+        y: [
+          experienceMap["No"],
+          experienceMap["Yes, one or more minor ones"],
+          experienceMap["Yes, one or more major ones"],
+        ],
+        type: "bar",
+      },
+    ];
+
     Plotly.newPlot("worryplot", worryData);
+
+    Plotly.newPlot("experienceplot", experienceData);
   </script>
-  
+
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const prevLink = document.getElementById('prevLink');
-      const nextLink = document.getElementById('nextLink');
-  
-      prevLink.addEventListener('click', function (event) {
+    document.addEventListener("DOMContentLoaded", function () {
+      const prevLink = document.getElementById("prevLink");
+      const nextLink = document.getElementById("nextLink");
+
+      prevLink.addEventListener("click", function (event) {
         event.preventDefault();
-        navigateToLink(prevLink.getAttribute('href'));
+        navigateToLink(prevLink.getAttribute("href"));
       });
-  
-      nextLink.addEventListener('click', function (event) {
+
+      nextLink.addEventListener("click", function (event) {
         event.preventDefault();
-        navigateToLink(nextLink.getAttribute('href'));
+        navigateToLink(nextLink.getAttribute("href"));
       });
-  
+
       function navigateToLink(link) {
         // Navigate to the specified link using JavaScript
-        if (link && link !== '#') {
+        if (link && link !== "#") {
           window.location.href = link;
         }
       }

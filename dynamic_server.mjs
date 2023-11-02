@@ -41,7 +41,6 @@ app.use(express.static(root));
 // GET ROUTE 1:
 // Age
 app.get("/age/:age", (req, res) => {
-
   const ageMap = {
     "18-29": "18 - 29",
     "30-44": "30 - 44",
@@ -65,7 +64,10 @@ app.get("/age/:age", (req, res) => {
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "Age" = ?`;
 
   let promise1 = dbSelect(query, [age]);
-  let promise2 = fs.promises.readFile(path.join(templates, "age.html"), "utf-8");
+  let promise2 = fs.promises.readFile(
+    path.join(templates, "age.html"),
+    "utf-8"
+  );
 
   Promise.all([promise1, promise2])
     .then((results) => {
@@ -102,13 +104,23 @@ app.get("/age/:age", (req, res) => {
 
       let response = results[1];
       response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
+      response = response.replace(
+        "$$EXPERIENCE_MAP$$",
+        JSON.stringify(experienceMap)
+      );
       response = response.replace("$AGE_GROUP$", age);
       response = response.replace("$TABLE_DATA$", table_body);
       response = response.replace("$TABLE_DATA2$", table_body2);
 
       // Add "Previous" and "Next" links to the response
-      response = response.replace("$PREV_LINK$", prevAge ? `/age/${prevAge}` : "#");
-      response = response.replace("$NEXT_LINK$", nextAge ? `/age/${nextAge}` : "#");
+      response = response.replace(
+        "$PREV_LINK$",
+        prevAge ? `/age/${prevAge}` : "#"
+      );
+      response = response.replace(
+        "$NEXT_LINK$",
+        nextAge ? `/age/${nextAge}` : "#"
+      );
 
       res.status(200).type("html").send(response);
     })
@@ -117,7 +129,6 @@ app.get("/age/:age", (req, res) => {
       res.status(404).send("Error: Age group not found");
     });
 });
-
 
 // GET ROUTE 2:
 // Income
@@ -149,7 +160,7 @@ app.get("/income/:income", (req, res) => {
     "175000-199999",
     "200000-up",
   ];
- 
+
   const currentIndex = possibleIncomes.indexOf(req.params.income);
 
   if (currentIndex === -1) {
@@ -159,7 +170,6 @@ app.get("/income/:income", (req, res) => {
 
   const prevIncome = possibleIncomes[currentIndex - 1];
   const nextIncome = possibleIncomes[currentIndex + 1];
- 
 
   const query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "How much total combined money did all members of your HOUSEHOLD earn last year?" = ?`;
 
@@ -168,54 +178,65 @@ app.get("/income/:income", (req, res) => {
     path.join(templates, "income.html"),
     "utf-8"
   );
-  Promise.all([promise1, promise2]).then((results) => {
-    let income_group = [income];
-    const worryMap = calculateWorry(results[0]);
-    const experienceMap = calculateExperience(results[0]);
-    let table_body = "";
-    for (const key in worryMap) {
-      if (worryMap.hasOwnProperty(key)) {
-        const value = worryMap[key];
-        const rowHtml = `
+  Promise.all([promise1, promise2])
+    .then((results) => {
+      let income_group = [income];
+      const worryMap = calculateWorry(results[0]);
+      const experienceMap = calculateExperience(results[0]);
+      let table_body = "";
+      for (const key in worryMap) {
+        if (worryMap.hasOwnProperty(key)) {
+          const value = worryMap[key];
+          const rowHtml = `
               <tr>
                   <td>${key}</td>
                   <td>${value}</td>
               </tr>
           `;
-        table_body += rowHtml;
+          table_body += rowHtml;
+        }
       }
-    }
-    let table_body2 = "";
-    for (const key in experienceMap) {
-      if (experienceMap.hasOwnProperty(key)) {
-        const value = experienceMap[key];
-        const rowHtml = `
+      let table_body2 = "";
+      for (const key in experienceMap) {
+        if (experienceMap.hasOwnProperty(key)) {
+          const value = experienceMap[key];
+          const rowHtml = `
               <tr>
                   <td>${key}</td>
                   <td>${value}</td>
               </tr>
           `;
-        table_body2 += rowHtml;
+          table_body2 += rowHtml;
+        }
       }
-    }
 
-    //let response = results[1].replace("$INCOME_GROUP$", income_group);
-    let response = results[1];
-    response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
-    response = response.replace("$INCOME_GROUP$", income_group);
-    response = response.replace("$TABLE_DATA$", table_body);
-    response = response.replace("$TABLE_DATA2$", table_body2);
-    //console.log(response);
+      //let response = results[1].replace("$INCOME_GROUP$", income_group);
+      let response = results[1];
+      response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
+      response = response.replace(
+        "$$EXPERIENCE_MAP$$",
+        JSON.stringify(experienceMap)
+      );
+      response = response.replace("$INCOME_GROUP$", income_group);
+      response = response.replace("$TABLE_DATA$", table_body);
+      response = response.replace("$TABLE_DATA2$", table_body2);
+      //console.log(response);
 
-    // Add "Previous" and "Next" links to the response
-    response = response.replace("$PREV_LINK$", prevIncome ? `/income/${prevIncome}` : "#");
-    response = response.replace("$NEXT_LINK$", nextIncome ? `/income/${nextIncome}` : "#");
-    res.status(200).type("html").send(response);
-  })
-  .catch((err) => {
-    console.log(err);
-    res.status(404).send("Error: Income group not found");
-  });
+      // Add "Previous" and "Next" links to the response
+      response = response.replace(
+        "$PREV_LINK$",
+        prevIncome ? `/income/${prevIncome}` : "#"
+      );
+      response = response.replace(
+        "$NEXT_LINK$",
+        nextIncome ? `/income/${nextIncome}` : "#"
+      );
+      res.status(200).type("html").send(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(404).send("Error: Income group not found");
+    });
 });
 
 // GET ROUTE 3:
@@ -237,7 +258,15 @@ app.get("/region/:region", (req, res) => {
   const region = regionMap[req.params.region];
 
   const possibleRegions = [
-    "ne", "ma", "enc", "wnc", "sa", "esc", "wsc", "m", "p"
+    "ne",
+    "ma",
+    "enc",
+    "wnc",
+    "sa",
+    "esc",
+    "wsc",
+    "m",
+    "p",
   ];
 
   const currentIndex = possibleRegions.indexOf(req.params.region);
@@ -250,7 +279,6 @@ app.get("/region/:region", (req, res) => {
   const prevRegion = possibleRegions[currentIndex - 1];
   const nextRegion = possibleRegions[currentIndex + 1];
 
-
   let query = `SELECT "In general, how worried are you about earthquakes?", "Have you ever experienced an earthquake?" FROM earthquake_data where "US Region" = ?`;
 
   let promise1 = dbSelect(query, [region]);
@@ -258,52 +286,63 @@ app.get("/region/:region", (req, res) => {
     path.join(templates, "region.html"),
     "utf-8"
   );
-  Promise.all([promise1, promise2]).then((results) => {
-    let region_name = [region];
-    const worryMap = calculateWorry(results[0]);
-    const experienceMap = calculateExperience(results[0]);
-    let table_body = "";
-    for (const key in worryMap) {
-      if (worryMap.hasOwnProperty(key)) {
-        const value = worryMap[key];
-        const rowHtml = `
+  Promise.all([promise1, promise2])
+    .then((results) => {
+      let region_name = [region];
+      const worryMap = calculateWorry(results[0]);
+      const experienceMap = calculateExperience(results[0]);
+      let table_body = "";
+      for (const key in worryMap) {
+        if (worryMap.hasOwnProperty(key)) {
+          const value = worryMap[key];
+          const rowHtml = `
               <tr>
                   <td>${key}</td>
                   <td>${value}</td>
               </tr>
           `;
-        table_body += rowHtml;
+          table_body += rowHtml;
+        }
       }
-    }
-    let table_body2 = "";
-    for (const key in experienceMap) {
-      if (experienceMap.hasOwnProperty(key)) {
-        const value = experienceMap[key];
-        const rowHtml = `
+      let table_body2 = "";
+      for (const key in experienceMap) {
+        if (experienceMap.hasOwnProperty(key)) {
+          const value = experienceMap[key];
+          const rowHtml = `
               <tr>
                   <td>${key}</td>
                   <td>${value}</td>
               </tr>
           `;
-        table_body2 += rowHtml;
+          table_body2 += rowHtml;
+        }
       }
-    }
 
-    //let response = results[1].replace("$REGION$", region_name);
-    let response = results[1];
-    response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
-    response = response.replace("$REGION$", region_name);
-    response = response.replace("$TABLE_DATA$", table_body);
-    response = response.replace("$TABLE_DATA2$", table_body2);
-    // Add "Previous" and "Next" links to the response
-    response = response.replace("$PREV_LINK$", prevRegion ? `/region/${prevRegion}` : "#");
-    response = response.replace("$NEXT_LINK$", nextRegion ? `/region/${nextRegion}` : "#");
-    res.status(200).type("html").send(response);
-  })
-  .catch((err) => {
-    console.log(err);
-    res.status(404).send("Error: Region not found");
-  });
+      //let response = results[1].replace("$REGION$", region_name);
+      let response = results[1];
+      response = response.replace("$$WORRY_MAP$$", JSON.stringify(worryMap));
+      response = response.replace(
+        "$$EXPERIENCE_MAP$$",
+        JSON.stringify(experienceMap)
+      );
+      response = response.replace("$REGION$", region_name);
+      response = response.replace("$TABLE_DATA$", table_body);
+      response = response.replace("$TABLE_DATA2$", table_body2);
+      // Add "Previous" and "Next" links to the response
+      response = response.replace(
+        "$PREV_LINK$",
+        prevRegion ? `/region/${prevRegion}` : "#"
+      );
+      response = response.replace(
+        "$NEXT_LINK$",
+        nextRegion ? `/region/${nextRegion}` : "#"
+      );
+      res.status(200).type("html").send(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(404).send("Error: Region not found");
+    });
 });
 
 app.listen(port, () => {

@@ -23,3 +23,15 @@ th {
 .datatable {
   width: max-content;
 }
+
+hr {
+  width: 50%;
+  height: 2px;
+  background-color: #005075;
+  border: none;
+}
+
+h4 {
+  padding: 0 5rem;
+  text-align: center;
+}

@@ -6,11 +6,11 @@
     <title>Earthquake Concern by Age</title>
     <link rel="stylesheet" href="/css/css.css" />
     <link rel="stylesheet" href="/css/foundation.css" />
+    <link rel="stylesheet" href="/css/templates.css" />
     <script
       src="https://cdn.plot.ly/plotly-2.27.0.min.js"
       charset="utf-8"
     ></script>
-    <link rel="stylesheet" href="/css/templates.css" />
   </head>
   <body>
     <div class="off-canvas-wrapper borderLine">
@@ -23,11 +23,15 @@
       </ul>
     </div>
     <h2>Earthquake Concern by Age</h2>
-    <p>People aged $AGE_GROUP$:</p>
+    <p style="font-style: italic">People aged $AGE_GROUP$</p>
     <!-- Placeholders for Previous and Next links -->
     <a href="$PREV_LINK$" id="prevLink">Previous</a>
     <a href="$NEXT_LINK$" id="nextLink">Next</a>
 
+    <br />
+    <hr />
+    <br />
+    <h4>How worried about earthquakes is this group?</h4>
     <div id="worryplot" style="width: 50%"></div>
     <table class="datatable">
       <thead>
@@ -40,7 +44,13 @@
         $TABLE_DATA$
       </tbody>
     </table>
-    <p></p>
+    <br />
+    <hr />
+    <br />
+    <h4>
+      How many people in this group have actually experienced an earthquake?
+    </h4>
+    <div id="experienceplot" style="width: 50%"></div>
     <table class="datatable">
       <thead>
         <tr>
@@ -78,7 +88,23 @@
       },
     ];
 
+    const experienceMap = $$EXPERIENCE_MAP$$;
+
+    const experienceData = [
+      {
+        x: ["No", "Yes, one or more minor ones", "Yes, one or more major ones"],
+        y: [
+          experienceMap["No"],
+          experienceMap["Yes, one or more minor ones"],
+          experienceMap["Yes, one or more major ones"],
+        ],
+        type: "bar",
+      },
+    ];
+
     Plotly.newPlot("worryplot", worryData);
+
+    Plotly.newPlot("experienceplot", experienceData);
   </script>
 
   <script>
