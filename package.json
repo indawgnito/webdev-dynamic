@@ -16,7 +16,7 @@
       "email": "ngon3769@stthomas.edu"
     }
   ],
-  "repository": {},
+  "repository": {https://github.com/indawgnito/webdev-dynamic},
   "dependencies": {
     "express": "^4.18.2",
     "plotly.js-dist": "^2.27.0",
