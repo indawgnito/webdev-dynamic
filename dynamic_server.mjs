@@ -109,6 +109,8 @@ app.get("/age/:age", (req, res) => {
         JSON.stringify(experienceMap)
       );
       response = response.replace("$AGE_GROUP$", age);
+      response = response.replace("$IMG_SOURCE$", imageMap["age"]);
+      response = response.replace("$IMG_ALT$", "Image representation of different age groups");
       response = response.replace("$TABLE_DATA$", table_body);
       response = response.replace("$TABLE_DATA2$", table_body2);
 
@@ -218,6 +220,8 @@ app.get("/income/:income", (req, res) => {
         JSON.stringify(experienceMap)
       );
       response = response.replace("$INCOME_GROUP$", income_group);
+      response = response.replace("$IMG_SOURCE$", imageMap["income"]);
+      response = response.replace("$IMG_ALT$", "Image representation of income in increasing order");
       response = response.replace("$TABLE_DATA$", table_body);
       response = response.replace("$TABLE_DATA2$", table_body2);
       //console.log(response);
@@ -326,6 +330,8 @@ app.get("/region/:region", (req, res) => {
         JSON.stringify(experienceMap)
       );
       response = response.replace("$REGION$", region_name);
+      response = response.replace("$IMG_SOURCE$", imageMap["region"]);
+      response = response.replace("$IMG_ALT$", "Image of US states divided into 9 regions");
       response = response.replace("$TABLE_DATA$", table_body);
       response = response.replace("$TABLE_DATA2$", table_body2);
       // Add "Previous" and "Next" links to the response
@@ -385,4 +391,11 @@ function calculateExperience(rows) {
   }
 
   return experienceMap;
+}
+
+// Images by route
+let imageMap = {
+  "age": "https://th.bing.com/th/id/R.f8c0f677df686f006aa784fd79aa952b?rik=WUuHKCDskF4SqA&pid=ImgRaw&r=0",
+  "income": "https://th.bing.com/th/id/R.2e08d4bd9ecdea1801176b86df80e3cf?rik=DjfFnKzQ0Rolmw&riu=http%3a%2f%2fwww.smartserve.co%2fwp-content%2fuploads%2f2019%2f07%2fincome.jpg&ehk=qcut%2fLiDy29HDIcEUqMN6a58BnUezkx%2fkSEQ1JyV9Xc%3d&risl=&pid=ImgRaw&r=0",
+  "region": "https://www.fla-shop.com/resources/us-regions/img/us-9-regions.png"
 }
